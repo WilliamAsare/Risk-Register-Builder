@@ -1,8 +1,6 @@
-const { getDb } = require('./database');
 const bcrypt = require('bcryptjs');
 
-async function seed() {
-  const db = await getDb();
+async function runSeed(db) {
   const passwordHash = await bcrypt.hash('demo1234', 12);
   const password2 = await bcrypt.hash('analyst1', 12);
   const password3 = await bcrypt.hash('manager1', 12);
@@ -257,4 +255,10 @@ async function seed() {
   console.log('  priya.sharma@meridian.io / manager1 (GRC Manager - owns SOX ITGC register)');
 }
 
-seed().catch(console.error);
+module.exports = { runSeed };
+
+// Allow running directly: node db/seed.js
+if (require.main === module) {
+  const { getDb } = require('./database');
+  getDb().then(db => runSeed(db)).catch(console.error);
+}

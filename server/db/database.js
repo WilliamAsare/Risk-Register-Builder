@@ -105,6 +105,16 @@ async function initDb() {
     }
   }
   db._save();
+
+  // Auto-seed if database is empty (no users)
+  const userCount = db.prepare('SELECT COUNT(*) as count FROM users').get();
+  if (!userCount || userCount.count === 0) {
+    console.log('Empty database detected - running seed...');
+    const { runSeed } = require('./seed');
+    await runSeed(db);
+    console.log('Seed complete.');
+  }
+
   return db;
 }
 
