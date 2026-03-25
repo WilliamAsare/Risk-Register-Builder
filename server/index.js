@@ -29,10 +29,8 @@ async function startServer() {
   const PORT = process.env.PORT || 3001;
   const isProd = process.env.NODE_ENV === 'production';
 
-  // Trust Railway's reverse proxy so secure cookies work
-  if (isProd) {
-    app.set('trust proxy', 1);
-  }
+  // Trust Railway's reverse proxy so secure cookies work over HTTPS
+  app.set('trust proxy', true);
 
   app.use(helmet({
     contentSecurityPolicy: {
@@ -66,6 +64,7 @@ async function startServer() {
     secret: sessionSecret || 'risk-register-dev-secret-change-in-production',
     resave: false,
     saveUninitialized: false,
+    proxy: true,
     cookie: {
       httpOnly: true,
       secure: isProd,
