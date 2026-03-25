@@ -27,6 +27,12 @@ async function startServer() {
 
   const app = express();
   const PORT = process.env.PORT || 3001;
+  const isProd = process.env.NODE_ENV === 'production';
+
+  // Trust Railway's reverse proxy so secure cookies work
+  if (isProd) {
+    app.set('trust proxy', 1);
+  }
 
   app.use(helmet({
     contentSecurityPolicy: {
@@ -43,14 +49,14 @@ async function startServer() {
     },
   }));
   app.use(cors({
-    origin: process.env.CLIENT_URL || 'http://localhost:5173',
+    origin: isProd ? true : (process.env.CLIENT_URL || 'http://localhost:5173'),
     credentials: true,
   }));
   app.use(express.json());
   app.use(morgan('[:date[iso]] :method :url :status :res[content-length] - :response-time ms'));
 
   const sessionSecret = process.env.SESSION_SECRET;
-  if (process.env.NODE_ENV === 'production' && !sessionSecret) {
+  if (isProd && !sessionSecret) {
     console.error('FATAL: SESSION_SECRET environment variable is required in production');
     process.exit(1);
   }
@@ -62,7 +68,7 @@ async function startServer() {
     saveUninitialized: false,
     cookie: {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
+      secure: isProd,
       sameSite: 'lax',
       maxAge: 24 * 60 * 60 * 1000,
     },
@@ -81,7 +87,7 @@ async function startServer() {
   app.use('/api/registers/:id', exportRoutes);
 
   // Serve static files in production
-  if (process.env.NODE_ENV === 'production') {
+  if (isProd) {
     app.use(express.static(path.join(__dirname, '..', 'client', 'dist')));
     app.get('*', (req, res) => {
       res.sendFile(path.join(__dirname, '..', 'client', 'dist', 'index.html'));
@@ -91,7 +97,7 @@ async function startServer() {
   app.use((err, req, res, _next) => {
     const status = err.status || 500;
     console.error(`[${new Date().toISOString()}] ${req.method} ${req.path} - ${status}: ${err.message}`);
-    const message = process.env.NODE_ENV === 'production' ? 'Internal server error' : (err.message || 'Internal server error');
+    const message = isProd ? 'Internal server error' : (err.message || 'Internal server error');
     res.status(status).json({ error: message });
   });
 
