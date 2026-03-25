@@ -142,6 +142,7 @@ export default function Dashboard() {
                 </div>
               )}
             </div>
+            <Link to="/guide" className="text-sm text-white/70 hover:text-white">Guide</Link>
             <span className="text-sm text-white/70">{user?.name}</span>
             <button onClick={() => { logout(); navigate('/'); }} className="text-sm text-white/70 hover:text-white">
               Sign out

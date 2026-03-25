@@ -9,6 +9,7 @@ import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
 import NewRegister from './pages/NewRegister';
 import RegisterDetail from './pages/RegisterDetail';
+import Guide from './pages/Guide';
 
 function ProtectedRoute({ children }) {
   const { user, loading } = useAuth();
@@ -42,6 +43,7 @@ export default function App() {
           <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
           <Route path="/registers/new" element={<ProtectedRoute><NewRegister /></ProtectedRoute>} />
           <Route path="/registers/:id" element={<ProtectedRoute><RegisterDetail /></ProtectedRoute>} />
+          <Route path="/guide" element={<Guide />} />
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>
       </ErrorBoundary>

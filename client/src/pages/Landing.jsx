@@ -55,6 +55,9 @@ export default function Landing() {
             <span className="text-lg font-bold text-navy">RiskRegister</span>
           </div>
           <div className="flex items-center gap-3">
+            <Link to="/guide">
+              <Button variant="ghost" size="sm">Guide</Button>
+            </Link>
             <Link to="/login">
               <Button variant="ghost" size="sm">Sign In</Button>
             </Link>
