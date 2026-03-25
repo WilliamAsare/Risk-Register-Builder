@@ -15,7 +15,7 @@ async function runSeed(db) {
   db.exec('DELETE FROM threats');
   db.exec('DELETE FROM assets');
   db.exec('DELETE FROM registers');
-  db.exec('DELETE FROM sessions');
+  try { db.exec('DELETE FROM sessions'); } catch(e) { /* table may not exist on fresh DB */ }
   db.exec('DELETE FROM users');
 
   // ──────────────────────────────────────────
